@@ -1,11 +1,16 @@
 import { Component } from '@angular/core';
-import { MatFormField } from "@angular/material/form-field";
+import {
+  MatFormField,
+  MatSuffix
+} from "@angular/material/form-field";
 import {
   FormControl,
   ReactiveFormsModule,
   Validators
 } from "@angular/forms";
 import { MatInput} from "@angular/material/input";
+import { MatIconButton } from "@angular/material/button";
+import { MatIcon } from "@angular/material/icon";
 
 enum PasswordLevel {
   Weak = 'Weak',
@@ -24,7 +29,10 @@ enum InputType {
   imports: [
     MatFormField,
     ReactiveFormsModule,
-    MatInput
+    MatInput,
+    MatSuffix,
+    MatIconButton,
+    MatIcon
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.css'
