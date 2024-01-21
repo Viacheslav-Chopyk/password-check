@@ -4,6 +4,10 @@ import {
   MatSuffix
 } from "@angular/material/form-field";
 import {
+  MatFormField,
+  MatSuffix
+} from "@angular/material/form-field";
+import {
   FormControl,
   ReactiveFormsModule,
   Validators
