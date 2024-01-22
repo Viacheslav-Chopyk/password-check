@@ -42,7 +42,7 @@ export class PasswordComponent implements OnDestroy {
   public passwordIsVisible: boolean = false;
   public readonly minPasswordLength : number = 8;
   public readonly passwordLevels:string[] = this.enumToArray(PasswordLevel);
-  private readonly subscribeToFormData: Subscription | undefined = new Subscription();
+  public readonly subscribeToFormData: Subscription | undefined = new Subscription();
 
 
   constructor(
@@ -67,7 +67,7 @@ export class PasswordComponent implements OnDestroy {
     }
   }
 
-  public enumToArray(enumObject: any): string[] {
+  public enumToArray(enumObject: Record<string, string>): string[] {
     const enumKeys : string[] = Object.keys(enumObject)
       .filter(key => isNaN(Number(enumObject[key])));
     const filteredKeys : string[] = enumKeys.slice(0, enumKeys.length - 1);
