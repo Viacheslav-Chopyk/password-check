@@ -8,7 +8,10 @@ import {
   Validators,
   ReactiveFormsModule
 } from '@angular/forms';
-import { MatFormField } from "@angular/material/form-field";
+import {
+  MatFormField,
+  MatSuffix
+} from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { Subscription } from "rxjs";
 import {
@@ -16,7 +19,6 @@ import {
   PasswordLevel
 } from "./enums/enums";
 import { PasswordValidators } from "./validators/password-validators";
-import { NgForOf } from "@angular/common";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 
@@ -29,9 +31,9 @@ import { MatIcon } from "@angular/material/icon";
     MatFormField,
     ReactiveFormsModule,
     MatInput,
-    NgForOf,
     MatIconButton,
-    MatIcon
+    MatIcon,
+    MatSuffix
   ]
 })
 export class PasswordComponent implements OnDestroy {
