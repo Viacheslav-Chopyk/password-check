@@ -69,10 +69,10 @@ export class PasswordComponent implements OnDestroy {
 
   public enumToArray(enumObject: Record<string, string>): string[] {
     const enumKeys : string[] = Object.keys(enumObject)
-      .filter(key => isNaN(Number(enumObject[key])));
+      .filter((key: string) => isNaN(Number(enumObject[key])));
     const filteredKeys : string[] = enumKeys.slice(0, enumKeys.length - 1);
 
-    return filteredKeys.map(key => enumObject[key]);
+    return filteredKeys.map((key : string) => enumObject[key]);
   }
 
   protected readonly InputType = InputType;
