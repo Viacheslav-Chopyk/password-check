@@ -1,22 +1,11 @@
-import {
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn
-} from '@angular/forms';
+import { PasswordLevel } from "../enums/enums";
 
-export enum PasswordLevel {
-  Weak = 'Weak',
-  Medium = 'Medium',
-  Strong = 'Strong',
-}
+export class PasswordValidators {
+  static readonly minPasswordLength: number = 8;
 
-export function passwordValidators(minLength: number): ValidatorFn {
-  const defaultColor : string = 'Grey'
-  return (control: AbstractControl): ValidationErrors | null => {
-    const password: string | null = control.value as string;
-
+  static checkPasswordStrength(password: string): string {
     if (!password) {
-      return  { passwordStrength: defaultColor }
+      return PasswordLevel.defaultColor;
     }
 
     const letterPattern: RegExp = /[a-zA-Z]/;
@@ -27,18 +16,19 @@ export function passwordValidators(minLength: number): ValidatorFn {
     const digits: boolean = digitPattern.test(password);
     const symbols: boolean = symbolPattern.test(password);
 
+    return this.validatePassword(password, letters, digits, symbols);
+  }
+
+  private static validatePassword(password: string, letters: boolean, digits: boolean, symbols: boolean): string {
     switch (true) {
-      case password.length < minLength:
-        console.log('minsymbol')
-        return { passwordStrength: PasswordLevel.Weak };
+      case password.length < this.minPasswordLength:
+        return PasswordLevel.Weak;
       case letters && digits && symbols:
-        console.log('Strong')
-        return { password: PasswordLevel.Strong };
+        return PasswordLevel.Strong;
       case (letters && digits) || (letters && symbols) || (digits && symbols):
-        console.log('medium')
-        return { password: PasswordLevel.Medium };
+        return PasswordLevel.Medium;
       default:
-        return { password: PasswordLevel.Weak };
+        return PasswordLevel.Weak;
     }
-  };
+  }
 }

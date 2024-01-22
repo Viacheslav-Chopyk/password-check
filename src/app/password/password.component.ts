@@ -1,70 +1,78 @@
-import { Component } from '@angular/core';
 import {
-  FormBuilder,
+  Component,
+  OnDestroy
+} from '@angular/core';
+import {
   FormGroup,
-  ReactiveFormsModule,
-  Validators
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule
 } from '@angular/forms';
 import { MatFormField } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
+import { Subscription } from "rxjs";
+import {
+  InputType,
+  PasswordLevel
+} from "./enums/enums";
+import { PasswordValidators } from "./validators/password-validators";
+import { NgForOf } from "@angular/common";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
-import {
-  PasswordLevel,
-  passwordValidators
-} from "./validators/password-validators";
-
-
-enum InputType {
-  Text = 'text',
-  Password = 'password',
-}
 
 @Component({
   selector: 'app-password',
   standalone: true,
   templateUrl: './password.component.html',
+  styleUrls: ['./password.component.css'],
   imports: [
-    ReactiveFormsModule,
     MatFormField,
+    ReactiveFormsModule,
     MatInput,
+    NgForOf,
     MatIconButton,
     MatIcon
-  ],
-  styleUrls: ['./password.component.css']
+  ]
 })
-export class PasswordComponent {
+export class PasswordComponent implements OnDestroy {
   public passwordForm: FormGroup;
   public passwordStrength: string = '';
   public passwordIsVisible: boolean = false;
-  public passwordLevels: string[] = ['Weak', 'Medium', 'Strong'];
-  public minPasswordLength: number = 8;
+  public readonly minPasswordLength : number = 8;
+  public readonly passwordLevels:string[] = this.enumToArray(PasswordLevel);
+  private readonly subscribeToFormData: Subscription | undefined = new Subscription();
+
 
   constructor(
-    private formBuilder: FormBuilder
+    private fb: FormBuilder
   ) {
-    this.passwordForm = this.formBuilder.group({
-      passwordControl: ['', [Validators.required, passwordValidators(this.minPasswordLength)]],
+    this.passwordForm = this.fb.group({
+      passwordControl: ['', Validators.required],
     });
 
-    this.passwordChanges();
-  }
-
-  private passwordChanges() {
-    this.passwordForm.get('passwordControl')?.valueChanges.subscribe(() => {
-      this.passwordStrength = this.calculatePasswordStrength();
+    this.subscribeToFormData = this.passwordForm.get('passwordControl')?.valueChanges.subscribe(() => {
+      this.checkPassword();
     });
   }
 
-  private calculatePasswordStrength(): string {
-    const passwordControl = this.passwordForm.get('passwordControl');
-    if (passwordControl && passwordControl.dirty && passwordControl.valid) {
-      const validationErrors = passwordValidators(this.minPasswordLength)(passwordControl);
-      return validationErrors ? validationErrors['passwordStrength'] : '';
+  public checkPassword(): void {
+    const password: string = this.passwordForm.get('passwordControl')?.value;
+    this.passwordStrength = PasswordValidators.checkPasswordStrength(password)
+  }
+  public ngOnDestroy(): void {
+    if (this.subscribeToFormData) {
+      this.subscribeToFormData.unsubscribe();
     }
-    return '';
   }
 
-  protected readonly InputType = InputType
+  public enumToArray(enumObject: any): string[] {
+    const enumKeys : string[] = Object.keys(enumObject)
+      .filter(key => isNaN(Number(enumObject[key])));
+    const filteredKeys : string[] = enumKeys.slice(0, enumKeys.length - 1);
+
+    return filteredKeys.map(key => enumObject[key]);
+  }
+
+  protected readonly InputType = InputType;
   protected readonly PasswordLevel = PasswordLevel;
 }
