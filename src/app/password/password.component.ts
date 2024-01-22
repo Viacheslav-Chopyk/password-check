@@ -1,22 +1,19 @@
 import { Component } from '@angular/core';
 import {
-  MatFormField,
-  MatSuffix
-} from "@angular/material/form-field";
-import {
-  FormControl,
+  FormBuilder,
+  FormGroup,
   ReactiveFormsModule,
   Validators
-} from "@angular/forms";
-import { MatInput} from "@angular/material/input";
+} from '@angular/forms';
+import { MatFormField } from "@angular/material/form-field";
+import { MatInput } from "@angular/material/input";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
+import {
+  PasswordLevel,
+  passwordValidators
+} from "./validators/password-validators";
 
-enum PasswordLevel {
-  Weak = 'Weak',
-  Medium = 'Medium',
-  Strong = 'Strong',
-}
 
 enum InputType {
   Text = 'text',
@@ -26,61 +23,48 @@ enum InputType {
 @Component({
   selector: 'app-password',
   standalone: true,
+  templateUrl: './password.component.html',
   imports: [
-    MatFormField,
     ReactiveFormsModule,
+    MatFormField,
     MatInput,
-    MatSuffix,
     MatIconButton,
     MatIcon
   ],
-  templateUrl: './password.component.html',
-  styleUrl: './password.component.css'
+  styleUrls: ['./password.component.css']
 })
 export class PasswordComponent {
-  public passwordControl : FormControl<string | null> = new FormControl('', Validators.required);
-  public passwordStrength : string = '';
-  public passwordIsVisible : boolean = false;
+  public passwordForm: FormGroup;
+  public passwordStrength: string = '';
+  public passwordIsVisible: boolean = false;
   public passwordLevels: string[] = ['Weak', 'Medium', 'Strong'];
+  public minPasswordLength: number = 8;
 
-  public checkPasswordStrength(): void {
-    const password : string | null = this.passwordControl.value;
+  constructor(
+    private formBuilder: FormBuilder
+  ) {
+    this.passwordForm = this.formBuilder.group({
+      passwordControl: ['', [Validators.required, passwordValidators(this.minPasswordLength)]],
+    });
 
-    if (!password) {
-      this.passwordStrength = 'grey';
-
-      return;
-    }
-
-    const letterPattern : RegExp = /[a-zA-Z]/;
-    const digitPattern : RegExp = /\d/;
-    const symbolPattern : RegExp = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/;
-
-    const letters : boolean = letterPattern.test(password);
-    const digits : boolean = digitPattern.test(password);
-    const symbols : boolean = symbolPattern.test(password);
-
-    this.validatePassword(password, letters, digits, symbols)
+    this.passwordChanges();
   }
 
-  private validatePassword(password: string, letters: boolean, digits: boolean, symbols: boolean) {
-    switch (true) {
-      case password.length < 8:
-        this.passwordStrength = PasswordLevel.Weak;
-        break;
-      case letters && digits && symbols:
-        this.passwordStrength = PasswordLevel.Strong;
-        break;
-      case (letters && digits) || (letters && symbols) || (digits && symbols):
-        this.passwordStrength = PasswordLevel.Medium;
-        break;
-      default:
-        this.passwordStrength = PasswordLevel.Weak;
-        break;
-    }
+  private passwordChanges() {
+    this.passwordForm.get('passwordControl')?.valueChanges.subscribe(() => {
+      this.passwordStrength = this.calculatePasswordStrength();
+    });
   }
 
-  protected readonly PasswordLevel = PasswordLevel;
+  private calculatePasswordStrength(): string {
+    const passwordControl = this.passwordForm.get('passwordControl');
+    if (passwordControl && passwordControl.dirty && passwordControl.valid) {
+      const validationErrors = passwordValidators(this.minPasswordLength)(passwordControl);
+      return validationErrors ? validationErrors['passwordStrength'] : '';
+    }
+    return '';
+  }
+
   protected readonly InputType = InputType
-
+  protected readonly PasswordLevel = PasswordLevel;
 }
