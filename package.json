@@ -7,7 +7,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:firebase:development": "ng build --configuration development"
+    "build:firebase:development": "ng build --configuration development --output-path=./environments/develop/firebase/dist && npm run build:firebase:prepare_development_base --output-path=./environments/develop/firebase/dist",
+    "build:firebase:prepare_development_base": "ng build --configuration prepare_development_base --output-path=./environments/develop/firebase/dist",
+    "build:firebase:production": "ng build --configuration production --output-path=./environments/production/firebase/dist && npm run build:firebase:prepare_production_base --output-path=./environments/production/firebase/dist",
+    "build:firebase:prepare_production_base": "ng build --configuration prepare_production_base --output-path=./environments/production/firebase/dist"
   },
   "private": true,
   "dependencies": {
