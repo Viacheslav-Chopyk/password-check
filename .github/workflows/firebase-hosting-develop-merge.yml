@@ -23,4 +23,4 @@ jobs:
           channelId: live
           target: pass-64c59
           projectId: pass-64c59
-          entrypoint: ./environments/develop/firebase
+          entrypoint: ./environments/firebase
