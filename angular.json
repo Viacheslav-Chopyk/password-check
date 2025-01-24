@@ -16,9 +16,7 @@
             "outputPath": "dist/password-check",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -86,6 +84,28 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "prepare_development_base": {
+              "optimization": false,
+              "outputPath": "environments/develop/firebase/dist",
+              "deleteOutputPath": true,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "environments/develop/environment.ts"
+                }
+              ],
+              "assets": [
+                "src/favicon.ico",
+                "src/assets",
+                {
+                  "glob": "robots.txt",
+                  "input": "environments/develop/",
+                  "output": "./"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
