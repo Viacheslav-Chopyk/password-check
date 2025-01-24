@@ -18,3 +18,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PASS_64C59 }}
           channelId: live
           projectId: pass-64c59
+          entrypoint: ./environments/develop/firebase
